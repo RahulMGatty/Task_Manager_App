@@ -1,6 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
+    id("com.google.gms.google-services")
 }
+
+
 
 android {
     namespace = "com.example.myapplication"
@@ -40,4 +43,13 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    // Firebase dependencies (you should define them in your version catalog or directly)
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
+
+
+
+    // Kotlin dependencies (same here - defined in your version catalog)
+    implementation(libs.kotlin.stdlib)
 }
