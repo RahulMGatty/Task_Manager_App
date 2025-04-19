@@ -1,10 +1,10 @@
-// ✅ This should be at the top
 package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
@@ -12,28 +12,38 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {
 
-    // ✅ Shared FirebaseAuth instance
     private FirebaseAuth mAuth;
 
     private EditText emailEditText, passwordEditText;
     private Button loginButton;
+    TextView textViewGoToRegister;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // ✅ Correct way: get the default FirebaseAuth instance
+        // ✅ Firebase Auth instance
         mAuth = FirebaseAuth.getInstance();
 
+
+
+
+        // ✅ View initializations
         emailEditText = findViewById(R.id.editTextEmail);
         passwordEditText = findViewById(R.id.editTextPassword);
         loginButton = findViewById(R.id.buttonLogin);
+        textViewGoToRegister = findViewById(R.id.textViewGoToRegister);
 
         loginButton.setOnClickListener(v -> {
             String email = emailEditText.getText().toString().trim();
             String password = passwordEditText.getText().toString().trim();
             loginUser(email, password);
+        });
+
+        textViewGoToRegister.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+            startActivity(intent);
         });
     }
 
