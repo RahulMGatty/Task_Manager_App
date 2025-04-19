@@ -1,20 +1,15 @@
 package com.example.myapplication;
 
 import android.os.Bundle;
-import android.widget.Button;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class AddTaskActivity extends AppCompatActivity {
 
-    private EditText editTextTitle, editTextDescription;
-    private Button buttonSaveTask;
+    private EditText editTextTaskTitle, editTextTaskDescription;
     private FirebaseFirestore db;
 
     @Override
@@ -22,36 +17,38 @@ public class AddTaskActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_task);
 
-        editTextTitle = findViewById(R.id.editTextTitle);
-        editTextDescription = findViewById(R.id.editTextDescription);
-        buttonSaveTask = findViewById(R.id.buttonSaveTask);
-
+        editTextTaskTitle = findViewById(R.id.editTextTitle);
+        editTextTaskDescription = findViewById(R.id.editTextDescription);
         db = FirebaseFirestore.getInstance();
 
-        buttonSaveTask.setOnClickListener(v -> saveTask());
+        findViewById(R.id.buttonSaveTask).setOnClickListener(v -> {
+            String taskTitle = editTextTaskTitle.getText().toString().trim();
+            String taskDescription = editTextTaskDescription.getText().toString().trim();
+
+            // TEMPORARY: Debug Toast to check task data before saving
+            Toast.makeText(AddTaskActivity.this, "Saving Task: " + taskTitle + " - " + taskDescription, Toast.LENGTH_SHORT).show();
+
+            if (!taskTitle.isEmpty() && !taskDescription.isEmpty()) {
+                saveTaskToFirestore(taskTitle, taskDescription);
+            } else {
+                Toast.makeText(AddTaskActivity.this, "Please fill out both fields", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-    private void saveTask() {
-        String title = editTextTitle.getText().toString().trim();
-        String description = editTextDescription.getText().toString().trim();
+    private void saveTaskToFirestore(String title, String description) {
+        // Creating a new task object
+        Task newTask = new Task(title, description);
 
-        if (title.isEmpty() || description.isEmpty()) {
-            Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        Map<String, Object> task = new HashMap<>();
-        task.put("title", title);
-        task.put("description", description);
-
+        // Saving the task to Firestore
         db.collection("tasks")
-                .add(task)
+                .add(newTask)
                 .addOnSuccessListener(documentReference -> {
-                    Toast.makeText(this, "Task added", Toast.LENGTH_SHORT).show();
-                    finish(); // Close activity after saving
+                    Toast.makeText(AddTaskActivity.this, "Task added successfully", Toast.LENGTH_SHORT).show();
+                    finish(); // Go back to HomeActivity after task is added
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Failed to add task", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddTaskActivity.this, "Error saving task: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 }
