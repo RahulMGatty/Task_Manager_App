@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -29,5 +30,10 @@ public class HomeActivity extends AppCompatActivity {
 
         adapter = new TaskAdapter(taskList);
         recyclerView.setAdapter(adapter);
+
+        findViewById(R.id.homeLayout).setOnClickListener(v -> {
+            startActivity(new Intent(HomeActivity.this, AddTaskActivity.class));
+        });
+
     }
 }
