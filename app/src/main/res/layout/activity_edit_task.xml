@@ -6,22 +6,29 @@
     android:padding="16dp">
 
     <EditText
-        android:id="@+id/edit_task_title"
+        android:id="@+id/editTextEditTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Task Title" />
 
     <EditText
-        android:id="@+id/edit_task_description"
+        android:id="@+id/editTextEditDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Task Description"
-        android:minLines="3"
-        android:gravity="top" />
+        android:layout_marginTop="8dp" />
 
     <Button
-        android:id="@+id/update_task_button"
+        android:id="@+id/buttonUpdateTask"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Update Task" />
+        android:text="Update Task"
+        android:layout_marginTop="16dp"/>
+
+    <Button
+        android:id="@+id/buttonDeleteTask"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Delete Task"
+        android:layout_marginTop="8dp"/>
 </LinearLayout>

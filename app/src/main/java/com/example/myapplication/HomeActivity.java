@@ -4,15 +4,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,7 @@ public class HomeActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         taskList = new ArrayList<>();
-        adapter = new TaskAdapter(taskList);
+        adapter = new TaskAdapter(this, taskList); // Pass context for Toast
         recyclerView.setAdapter(adapter);
 
         fabAddTask = findViewById(R.id.fabAddTask);
@@ -44,7 +44,7 @@ public class HomeActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
 
-        loadTasksFromFirestore(); // Load tasks on startup
+        loadTasksFromFirestore(); // Initial task load
     }
 
     private void loadTasksFromFirestore() {
@@ -54,7 +54,9 @@ public class HomeActivity extends AppCompatActivity {
                     taskList.clear();
                     for (DocumentSnapshot doc : queryDocumentSnapshots) {
                         Task task = doc.toObject(Task.class);
-                        taskList.add(task);
+                        if (task != null && task.getTitle() != null && task.getDescription() != null) {
+                            taskList.add(task);
+                        }
                     }
                     adapter.notifyDataSetChanged();
                 })
@@ -67,6 +69,6 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        loadTasksFromFirestore(); // Reload tasks when coming back from AddTaskActivity
+        loadTasksFromFirestore(); // Reload tasks when returning from AddTaskActivity
     }
 }

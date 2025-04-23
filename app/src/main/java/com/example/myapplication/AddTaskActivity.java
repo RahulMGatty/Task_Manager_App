@@ -1,7 +1,6 @@
 package com.example.myapplication;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,10 +24,8 @@ public class AddTaskActivity extends AppCompatActivity {
             String taskTitle = editTextTaskTitle.getText().toString().trim();
             String taskDescription = editTextTaskDescription.getText().toString().trim();
 
-            // TEMPORARY: Debug Toast to check task data before saving
-            Toast.makeText(AddTaskActivity.this, "Saving Task: " + taskTitle + " - " + taskDescription, Toast.LENGTH_SHORT).show();
-
             if (!taskTitle.isEmpty() && !taskDescription.isEmpty()) {
+                // Save task to Firestore
                 saveTaskToFirestore(taskTitle, taskDescription);
             } else {
                 Toast.makeText(AddTaskActivity.this, "Please fill out both fields", Toast.LENGTH_SHORT).show();
@@ -42,10 +39,10 @@ public class AddTaskActivity extends AppCompatActivity {
 
         // Saving the task to Firestore
         db.collection("tasks")
-                .add(newTask)
+                .add(newTask) // Add task to "tasks" collection
                 .addOnSuccessListener(documentReference -> {
-                    Toast.makeText(AddTaskActivity.this, "Task added successfully", Toast.LENGTH_SHORT).show();
-                    finish(); // Go back to HomeActivity after task is added
+                    // Task saved successfully, navigate back to HomeActivity
+                    finish(); // Close AddTaskActivity and return to HomeActivity
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(AddTaskActivity.this, "Error saving task: " + e.getMessage(), Toast.LENGTH_SHORT).show();

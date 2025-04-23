@@ -47,6 +47,7 @@ dependencies {
     // Firebase dependencies (you should define them in your version catalog or directly)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
+    implementation(platform(libs.firebase.bom))
 
 
 
