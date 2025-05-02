@@ -3,10 +3,11 @@ package com.example.myapplication;
 public class Task {
     private String title;
     private String description;
-    private String id;
+    private String id; // Firestore document ID
 
-    // Required empty constructor for Firestore
-    public Task() {}
+    public Task() {
+        // Needed for Firestore
+    }
 
     public Task(String title, String description) {
         this.title = title;
@@ -20,6 +21,7 @@ public class Task {
     public String getDescription() {
         return description;
     }
+
     public String getId() {
         return id;
     }
