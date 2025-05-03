@@ -47,6 +47,16 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+            finish();
+        }
+    }
+
     private void loginUser(String email, String password) {
         if (email.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Email and password must not be empty", Toast.LENGTH_SHORT).show();

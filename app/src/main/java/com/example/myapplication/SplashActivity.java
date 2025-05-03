@@ -8,6 +8,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.appcompat.widget.Toolbar;
+
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -22,31 +24,29 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash); // Make sure this layout exists
+        setContentView(R.layout.activity_splash);
 
-        // Initialize FirebaseAuth
         mAuth = FirebaseAuth.getInstance();
 
         ImageView logo = findViewById(R.id.imageView2);
         TextView appName = findViewById(R.id.textAppName);
 
-        // Load animations
+        // Load and start animations
         Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
         Animation slideUp = AnimationUtils.loadAnimation(this, R.anim.slide_up);
 
-        // Check if the user is logged in after splash screen
+        logo.startAnimation(fadeIn);
+        appName.startAnimation(slideUp);
+
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             FirebaseUser currentUser = mAuth.getCurrentUser();
-
             if (currentUser != null) {
-                // ✅ User is signed in → Go to HomeActivity
                 startActivity(new Intent(SplashActivity.this, HomeActivity.class));
             } else {
-                // 🚫 Not signed in → Go to LoginActivity
                 startActivity(new Intent(SplashActivity.this, LoginActivity.class));
             }
-
-            finish(); // close splash activity
-        }, SPLASH_DELAY); // This is the splash duration (2 seconds)
+            finish();
+        }, 2000);
     }
+
 }
