@@ -3,16 +3,18 @@ package com.example.myapplication;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
@@ -41,8 +43,34 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         if (task != null && task.getTitle() != null) {
             holder.titleText.setText(task.getTitle());
             holder.descriptionText.setText(task.getDescription());
+            holder.checkBoxCompleted.setChecked(task.isCompleted());
 
-            // Click to edit task
+            // Visual strike-through if completed
+            if (task.isCompleted()) {
+                holder.titleText.setPaintFlags(holder.titleText.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            } else {
+                holder.titleText.setPaintFlags(holder.titleText.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+            }
+
+            // Handle checkbox change
+            holder.checkBoxCompleted.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                task.setCompleted(isChecked);
+                String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                FirebaseFirestore.getInstance()
+                        .collection("users")
+                        .document(userId)
+                        .collection("tasks")
+                        .document(task.getId())
+                        .update("completed", isChecked)
+                        .addOnSuccessListener(aVoid -> {
+                            // Optional toast or silent update
+                        })
+                        .addOnFailureListener(e ->
+                                Toast.makeText(context, "Failed to update task", Toast.LENGTH_SHORT).show());
+            });
+
+            // Click to edit
             holder.itemView.setOnClickListener(v -> {
                 Intent intent = new Intent(context, EditTaskActivity.class);
                 intent.putExtra("taskId", task.getId());
@@ -51,7 +79,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 context.startActivity(intent);
             });
 
-            // Long click to delete task
+            // Long click to delete
             holder.itemView.setOnLongClickListener(v -> {
                 new AlertDialog.Builder(context)
                         .setTitle("Delete Task")
@@ -77,7 +105,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 return true;
             });
 
-
         } else {
             holder.titleText.setText("Unknown Task");
             holder.descriptionText.setText("");
@@ -87,8 +114,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         }
     }
 
-
-
     @Override
     public int getItemCount() {
         return taskList.size();
@@ -96,11 +121,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     public static class TaskViewHolder extends RecyclerView.ViewHolder {
         TextView titleText, descriptionText;
+        CheckBox checkBoxCompleted;
 
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
             titleText = itemView.findViewById(R.id.textViewTaskTitle);
             descriptionText = itemView.findViewById(R.id.textViewTaskDescription);
+            checkBoxCompleted = itemView.findViewById(R.id.checkBoxCompleted); // <- new field
         }
     }
 }

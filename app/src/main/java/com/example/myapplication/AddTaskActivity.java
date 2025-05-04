@@ -45,7 +45,7 @@ public class AddTaskActivity extends AppCompatActivity {
         }
 
         Task newTask = new Task(title, description);
-
+        newTask.setCompleted(false);
         db.collection("users")
                 .document(user.getUid())
                 .collection("tasks")
