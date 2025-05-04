@@ -4,51 +4,70 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class EditTaskActivity extends AppCompatActivity {
-    private EditText editTitle, editDescription;
-    private Button buttonUpdate;
+
+    private EditText editTextTitle, editTextDescription;
+    private Button buttonUpdateTask;
     private FirebaseFirestore db;
+
     private String taskId;
+    private String initialTitle;
+    private String initialDescription;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_task);
 
-        editTitle = findViewById(R.id.editTextEditTitle);
-        editDescription = findViewById(R.id.editTextEditDescription);
-        buttonUpdate = findViewById(R.id.buttonUpdateTask);
+        editTextTitle = findViewById(R.id.editTextEditTitle);
+        editTextDescription = findViewById(R.id.editTextEditDescription);
+        buttonUpdateTask = findViewById(R.id.buttonUpdateTask);
         db = FirebaseFirestore.getInstance();
 
-        // Get data from intent
+        // Get task details from Intent
         taskId = getIntent().getStringExtra("taskId");
-        String title = getIntent().getStringExtra("title");
-        String description = getIntent().getStringExtra("description");
+        initialTitle = getIntent().getStringExtra("title");
+        initialDescription = getIntent().getStringExtra("description");
 
-        // Set current values
-        editTitle.setText(title);
-        editDescription.setText(description);
+        editTextTitle.setText(initialTitle);
+        editTextDescription.setText(initialDescription);
 
-        buttonUpdate.setOnClickListener(v -> {
-            String newTitle = editTitle.getText().toString().trim();
-            String newDesc = editDescription.getText().toString().trim();
+        buttonUpdateTask.setOnClickListener(v -> updateTask());
+    }
 
-            if (!newTitle.isEmpty() && !newDesc.isEmpty()) {
-                db.collection("tasks").document(taskId)
-                        .update("title", newTitle, "description", newDesc)
-                        .addOnSuccessListener(unused -> {
-                            Toast.makeText(this, "Task updated", Toast.LENGTH_SHORT).show();
-                            finish();
-                        })
-                        .addOnFailureListener(e ->
-                                Toast.makeText(this, "Update failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-            } else {
-                Toast.makeText(this, "Both fields required", Toast.LENGTH_SHORT).show();
-            }
-        });
+    private void updateTask() {
+        String updatedTitle = editTextTitle.getText().toString().trim();
+        String updatedDescription = editTextDescription.getText().toString().trim();
+
+        if (updatedTitle.isEmpty() || updatedDescription.isEmpty()) {
+            Toast.makeText(this, "Both fields are required", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Toast.makeText(this, "User not authenticated", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        db.collection("users")
+                .document(user.getUid())
+                .collection("tasks")
+                .document(taskId)
+                .update("title", updatedTitle, "description", updatedDescription)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(EditTaskActivity.this, "Task updated", Toast.LENGTH_SHORT).show();
+                    finish(); // Return to HomeActivity
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(EditTaskActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                );
     }
 }
-

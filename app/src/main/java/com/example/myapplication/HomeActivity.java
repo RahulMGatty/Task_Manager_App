@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -57,24 +58,30 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void loadTasksFromFirestore() {
-        db.collection("tasks")
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    taskList.clear();
-                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
-                        Task task = doc.toObject(Task.class);
-                        if (task != null && task.getTitle() != null && task.getDescription() != null) {
-                            task.setId(doc.getId());
-                            taskList.add(task);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            db.collection("users")
+                    .document(user.getUid())
+                    .collection("tasks")
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        taskList.clear();
+                        for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                            Task task = doc.toObject(Task.class);
+                            if (task != null) {
+                                task.setId(doc.getId());
+                                taskList.add(task);
+                            }
                         }
-                    }
-                    adapter.notifyDataSetChanged();
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(HomeActivity.this, "Failed to load tasks: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    Log.e("HomeActivity", "Error fetching tasks", e);
-                });
+                        adapter.notifyDataSetChanged();
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(HomeActivity.this, "Failed to load tasks: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Log.e("HomeActivity", "Error fetching tasks", e);
+                    });
+        }
     }
+
 
     @Override
     protected void onResume() {

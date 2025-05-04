@@ -3,7 +3,11 @@ package com.example.myapplication;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class AddTaskActivity extends AppCompatActivity {
@@ -25,7 +29,6 @@ public class AddTaskActivity extends AppCompatActivity {
             String taskDescription = editTextTaskDescription.getText().toString().trim();
 
             if (!taskTitle.isEmpty() && !taskDescription.isEmpty()) {
-                // Save task to Firestore
                 saveTaskToFirestore(taskTitle, taskDescription);
             } else {
                 Toast.makeText(AddTaskActivity.this, "Please fill out both fields", Toast.LENGTH_SHORT).show();
@@ -34,18 +37,22 @@ public class AddTaskActivity extends AppCompatActivity {
     }
 
     private void saveTaskToFirestore(String title, String description) {
-        // Creating a new task object
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user == null) {
+            Toast.makeText(this, "User not authenticated", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         Task newTask = new Task(title, description);
 
-        // Saving the task to Firestore
-        db.collection("tasks")
-                .add(newTask) // Add task to "tasks" collection
-                .addOnSuccessListener(documentReference -> {
-                    // Task saved successfully, navigate back to HomeActivity
-                    finish(); // Close AddTaskActivity and return to HomeActivity
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(AddTaskActivity.this, "Error saving task: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
+        db.collection("users")
+                .document(user.getUid())
+                .collection("tasks")
+                .add(newTask)
+                .addOnSuccessListener(documentReference -> finish()) // go back to HomeActivity
+                .addOnFailureListener(e ->
+                        Toast.makeText(AddTaskActivity.this, "Error saving task: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                );
     }
 }

@@ -11,6 +11,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
@@ -40,7 +42,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             holder.titleText.setText(task.getTitle());
             holder.descriptionText.setText(task.getDescription());
 
-            // Click to show toast
+            // Click to edit task
             holder.itemView.setOnClickListener(v -> {
                 Intent intent = new Intent(context, EditTaskActivity.class);
                 intent.putExtra("taskId", task.getId());
@@ -55,7 +57,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                         .setTitle("Delete Task")
                         .setMessage("Are you sure you want to delete this task?")
                         .setPositiveButton("Yes", (dialog, which) -> {
+                            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
                             FirebaseFirestore.getInstance()
+                                    .collection("users")
+                                    .document(userId)
                                     .collection("tasks")
                                     .document(task.getId())
                                     .delete()
@@ -72,6 +77,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 return true;
             });
 
+
         } else {
             holder.titleText.setText("Unknown Task");
             holder.descriptionText.setText("");
@@ -80,6 +86,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             );
         }
     }
+
 
 
     @Override
