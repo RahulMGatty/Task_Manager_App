@@ -44,8 +44,11 @@ public class AddTaskActivity extends AppCompatActivity {
             return;
         }
 
+        // Create task with timestamp
         Task newTask = new Task(title, description);
         newTask.setCompleted(false);
+        newTask.setTimestamp(System.currentTimeMillis());  // <-- Set timestamp
+
         db.collection("users")
                 .document(user.getUid())
                 .collection("tasks")

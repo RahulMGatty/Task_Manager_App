@@ -18,7 +18,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
 
@@ -46,7 +49,15 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             holder.descriptionText.setText(task.getDescription());
             holder.checkBoxCompleted.setChecked(task.isCompleted());
 
-
+            // Format and display creation date
+            long timestamp = task.getTimestamp();
+            if (timestamp > 0) {
+                SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.getDefault());
+                String formattedDate = sdf.format(new Date(timestamp));
+                holder.dateText.setText("Created on: " + formattedDate);
+            } else {
+                holder.dateText.setText("Date not available");
+            }
 
             // Visual strike-through if completed
             if (task.isCompleted()) {
@@ -60,7 +71,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 holder.titleText.setTextColor(ContextCompat.getColor(context, android.R.color.black));
                 holder.descriptionText.setTextColor(ContextCompat.getColor(context, android.R.color.black));
             }
-
 
             // Handle checkbox change
             holder.checkBoxCompleted.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -130,14 +140,15 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     }
 
     public static class TaskViewHolder extends RecyclerView.ViewHolder {
-        TextView titleText, descriptionText;
+        TextView titleText, descriptionText, dateText;
         CheckBox checkBoxCompleted;
 
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
             titleText = itemView.findViewById(R.id.textViewTaskTitle);
             descriptionText = itemView.findViewById(R.id.textViewTaskDescription);
-            checkBoxCompleted = itemView.findViewById(R.id.checkBoxCompleted); // <- new field
+            dateText = itemView.findViewById(R.id.textViewTaskDate);
+            checkBoxCompleted = itemView.findViewById(R.id.checkBoxCompleted);
         }
     }
 }

@@ -37,10 +37,20 @@
                 android:textSize="14sp"
                 android:textColor="#555555" />
 
+            <TextView
+                android:id="@+id/textViewTaskDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Created on: "
+                android:textSize="12sp"
+                android:textColor="@android:color/darker_gray"
+                android:layout_marginTop="4dp"/>
+
+
         </LinearLayout>
 
         <CheckBox
-            android:id="@+id/checkBoxTaskCompleted"
+            android:id="@+id/checkBoxCompleted"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="Mark as Completed" />
