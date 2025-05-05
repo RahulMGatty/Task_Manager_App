@@ -6,4 +6,10 @@
         android:icon="@drawable/logout"
         android:title="Logout"
         app:showAsAction="ifRoom|withText" />
+    <item
+        android:id="@+id/action_filter"
+        android:title="Filter"
+        android:orderInCategory="100"
+        app:showAsAction="never" />
+
 </menu>

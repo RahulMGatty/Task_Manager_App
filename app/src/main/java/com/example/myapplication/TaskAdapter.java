@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -45,12 +46,21 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             holder.descriptionText.setText(task.getDescription());
             holder.checkBoxCompleted.setChecked(task.isCompleted());
 
+
+
             // Visual strike-through if completed
             if (task.isCompleted()) {
                 holder.titleText.setPaintFlags(holder.titleText.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                holder.descriptionText.setPaintFlags(holder.descriptionText.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                holder.titleText.setTextColor(ContextCompat.getColor(context, android.R.color.darker_gray));
+                holder.descriptionText.setTextColor(ContextCompat.getColor(context, android.R.color.darker_gray));
             } else {
                 holder.titleText.setPaintFlags(holder.titleText.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                holder.descriptionText.setPaintFlags(holder.descriptionText.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                holder.titleText.setTextColor(ContextCompat.getColor(context, android.R.color.black));
+                holder.descriptionText.setTextColor(ContextCompat.getColor(context, android.R.color.black));
             }
+
 
             // Handle checkbox change
             holder.checkBoxCompleted.setOnCheckedChangeListener((buttonView, isChecked) -> {

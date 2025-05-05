@@ -5,14 +5,17 @@ public class Task {
     private String title;
     private String description;
     private boolean completed;
+    private long timestamp; // <- new field
 
     // Required empty constructor for Firestore
-    public Task() {}
+    public Task() {
+    }
 
     public Task(String title, String description) {
         this.title = title;
         this.description = description;
-        this.completed = false; // default to not completed
+        this.completed = false;
+        this.timestamp = System.currentTimeMillis(); // <- set when task is created
     }
 
     // Getters and setters
@@ -46,5 +49,13 @@ public class Task {
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 }

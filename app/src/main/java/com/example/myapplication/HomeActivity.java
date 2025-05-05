@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -54,10 +55,10 @@ public class HomeActivity extends AppCompatActivity {
 
         // Initialize Firestore and load tasks
         db = FirebaseFirestore.getInstance();
-        loadTasksFromFirestore();
+        loadTasksFromFirestore(null);
     }
 
-    private void loadTasksFromFirestore() {
+    private void loadTasksFromFirestore(Boolean completedFilter) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             db.collection("users")
@@ -70,23 +71,42 @@ public class HomeActivity extends AppCompatActivity {
                             Task task = doc.toObject(Task.class);
                             if (task != null) {
                                 task.setId(doc.getId());
-                                taskList.add(task);
+                                if (completedFilter == null || task.isCompleted() == completedFilter) {
+                                    taskList.add(task);
+                                }
                             }
                         }
                         adapter.notifyDataSetChanged();
                     })
                     .addOnFailureListener(e -> {
                         Toast.makeText(HomeActivity.this, "Failed to load tasks: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        Log.e("HomeActivity", "Error fetching tasks", e);
                     });
         }
+    }
+
+    private void sortTasksAlphabetically(boolean ascending) {
+        if (ascending) {
+            taskList.sort((t1, t2) -> t1.getTitle().compareToIgnoreCase(t2.getTitle()));
+        } else {
+            taskList.sort((t1, t2) -> t2.getTitle().compareToIgnoreCase(t1.getTitle()));
+        }
+        adapter.notifyDataSetChanged();
+    }
+
+    private void sortTasksByTime(boolean newestFirst) {
+        if (newestFirst) {
+            taskList.sort((t1, t2) -> Long.compare(t2.getTimestamp(), t1.getTimestamp()));
+        } else {
+            taskList.sort((t1, t2) -> Long.compare(t1.getTimestamp(), t2.getTimestamp()));
+        }
+        adapter.notifyDataSetChanged();
     }
 
 
     @Override
     protected void onResume() {
         super.onResume();
-        loadTasksFromFirestore();
+        loadTasksFromFirestore(null);
     }
 
     @Override
@@ -95,16 +115,56 @@ public class HomeActivity extends AppCompatActivity {
         return true;
     }
 
+    private void showFilterSortDialog() {
+        String[] options = {"All", "Completed", "Pending", "A–Z", "Z–A", "Newest First", "Oldest First"};
+        new AlertDialog.Builder(this)
+                .setTitle("Filter / Sort Tasks")
+                .setItems(options, (dialog, which) -> {
+                    switch (which) {
+                        case 0:
+                            loadTasksFromFirestore(null);
+                            break;
+                        case 1:
+                            loadTasksFromFirestore(true);
+                            break;
+                        case 2:
+                            loadTasksFromFirestore(false);
+                            break;
+                        case 3:
+                            sortTasksAlphabetically(true);
+                            break;
+                        case 4:
+                            sortTasksAlphabetically(false);
+                            break;
+                        case 5:
+                            sortTasksByTime(true);  // newest first
+                            break;
+                        case 6:
+                            sortTasksByTime(false); // oldest first
+                            break;
+                    }
+                })
+                .show();
+    }
+
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.action_logout) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_logout) {
             FirebaseAuth.getInstance().signOut();
             Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();
             return true;
+        } else if (id == R.id.action_filter) {
+            showFilterSortDialog();
+            return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
+
 }
