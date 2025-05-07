@@ -19,6 +19,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import com.google.firebase.Timestamp;
+import java.util.Collections;
+
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,11 +75,21 @@ public class HomeActivity extends AppCompatActivity {
                             Task task = doc.toObject(Task.class);
                             if (task != null) {
                                 task.setId(doc.getId());
+
+                                // Convert Firestore timestamp to long
+                                if (doc.contains("timestamp") && doc.get("timestamp") != null) {
+                                    Timestamp ts = doc.getTimestamp("timestamp");
+                                    task.setTimestamp(ts != null ? ts.toDate().getTime() : 0);
+                                }
+
                                 if (completedFilter == null || task.isCompleted() == completedFilter) {
                                     taskList.add(task);
                                 }
                             }
                         }
+                        // Optional: sort by newest first
+                        Collections.sort(taskList, (t1, t2) -> Long.compare(t2.getTimestamp(), t1.getTimestamp()));
+
                         adapter.notifyDataSetChanged();
                     })
                     .addOnFailureListener(e -> {
