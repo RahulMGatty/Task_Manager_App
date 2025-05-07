@@ -5,24 +5,22 @@ public class Task {
     private String title;
     private String description;
     private boolean completed;
-    private long timestamp; // <- new field
+    private Long timestamp; // Use wrapper Long to handle null
 
-    // Required empty constructor for Firestore
-    public Task() {
-    }
+    // Firestore requires empty constructor
+    public Task() {}
 
     public Task(String title, String description) {
         this.title = title;
         this.description = description;
         this.completed = false;
-        this.timestamp = System.currentTimeMillis(); // <- set when task is created
+        // Do NOT set timestamp here anymore
     }
 
-    // Getters and setters
+    // Getters and Setters
     public String getId() {
         return id;
     }
-
     public void setId(String id) {
         this.id = id;
     }
@@ -30,7 +28,6 @@ public class Task {
     public String getTitle() {
         return title;
     }
-
     public void setTitle(String title) {
         this.title = title;
     }
@@ -38,7 +35,6 @@ public class Task {
     public String getDescription() {
         return description;
     }
-
     public void setDescription(String description) {
         this.description = description;
     }
@@ -46,16 +42,14 @@ public class Task {
     public boolean isCompleted() {
         return completed;
     }
-
     public void setCompleted(boolean completed) {
         this.completed = completed;
     }
 
-    public long getTimestamp() {
+    public Long getTimestamp() {
         return timestamp;
     }
-
-    public void setTimestamp(long timestamp) {
+    public void setTimestamp(Long timestamp) {
         this.timestamp = timestamp;
     }
 }

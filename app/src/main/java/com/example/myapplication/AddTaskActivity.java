@@ -10,6 +10,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class AddTaskActivity extends AppCompatActivity {
 
     private EditText editTextTaskTitle, editTextTaskDescription;
@@ -44,18 +47,24 @@ public class AddTaskActivity extends AppCompatActivity {
             return;
         }
 
-        // Create task with timestamp
         Task newTask = new Task(title, description);
         newTask.setCompleted(false);
-        newTask.setTimestamp(System.currentTimeMillis());  // <-- Set timestamp
+
+        // Use a map to include Firestore's server timestamp
+        Map<String, Object> taskMap = new HashMap<>();
+        taskMap.put("title", newTask.getTitle());
+        taskMap.put("description", newTask.getDescription());
+        taskMap.put("completed", newTask.isCompleted());
+        taskMap.put("timestamp", com.google.firebase.firestore.FieldValue.serverTimestamp());
 
         db.collection("users")
                 .document(user.getUid())
                 .collection("tasks")
-                .add(newTask)
-                .addOnSuccessListener(documentReference -> finish()) // go back to HomeActivity
+                .add(taskMap)
+                .addOnSuccessListener(documentReference -> finish())
                 .addOnFailureListener(e ->
                         Toast.makeText(AddTaskActivity.this, "Error saving task: " + e.getMessage(), Toast.LENGTH_SHORT).show()
                 );
     }
+
 }
