@@ -71,15 +71,16 @@ public class HomeActivity extends AppCompatActivity {
                     .get()
                     .addOnSuccessListener(queryDocumentSnapshots -> {
                         taskList.clear();
+                        // Inside for loop in loadTasksFromFirestore
                         for (DocumentSnapshot doc : queryDocumentSnapshots) {
                             Task task = doc.toObject(Task.class);
                             if (task != null) {
                                 task.setId(doc.getId());
 
-                                // Convert Firestore timestamp to long
+                                // Fix: Ensure correct Firebase Timestamp is used
                                 if (doc.contains("timestamp") && doc.get("timestamp") != null) {
                                     Timestamp ts = doc.getTimestamp("timestamp");
-                                    task.setTimestamp(ts != null ? ts.toDate().getTime() : 0);
+                                    task.setTimestamp(ts);
                                 }
 
                                 if (completedFilter == null || task.isCompleted() == completedFilter) {
@@ -87,8 +88,14 @@ public class HomeActivity extends AppCompatActivity {
                                 }
                             }
                         }
-                        // Optional: sort by newest first
-                        Collections.sort(taskList, (t1, t2) -> Long.compare(t2.getTimestamp(), t1.getTimestamp()));
+
+// Sort using task.getTimestamp().toDate().getTime()
+                        Collections.sort(taskList, (t1, t2) -> {
+                            long t1Time = t1.getTimestamp() != null ? t1.getTimestamp().toDate().getTime() : 0;
+                            long t2Time = t2.getTimestamp() != null ? t2.getTimestamp().toDate().getTime() : 0;
+                            return Long.compare(t2Time, t1Time);
+                        });
+
 
                         adapter.notifyDataSetChanged();
                     })
@@ -108,13 +115,14 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void sortTasksByTime(boolean newestFirst) {
-        if (newestFirst) {
-            taskList.sort((t1, t2) -> Long.compare(t2.getTimestamp(), t1.getTimestamp()));
-        } else {
-            taskList.sort((t1, t2) -> Long.compare(t1.getTimestamp(), t2.getTimestamp()));
-        }
+        taskList.sort((t1, t2) -> {
+            long time1 = t1.getTimestamp() != null ? t1.getTimestamp().toDate().getTime() : 0;
+            long time2 = t2.getTimestamp() != null ? t2.getTimestamp().toDate().getTime() : 0;
+            return newestFirst ? Long.compare(time2, time1) : Long.compare(time1, time2);
+        });
         adapter.notifyDataSetChanged();
     }
+
 
 
     @Override

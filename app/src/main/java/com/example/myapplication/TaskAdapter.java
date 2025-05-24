@@ -50,7 +50,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             holder.checkBoxCompleted.setChecked(task.isCompleted());
 
             // Format and display creation date
-            long timestamp = task.getTimestamp();
+            long timestamp = task.getTimestampMillis();
             if (timestamp > 0) {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.getDefault());
                 String formattedDate = sdf.format(new Date(timestamp));

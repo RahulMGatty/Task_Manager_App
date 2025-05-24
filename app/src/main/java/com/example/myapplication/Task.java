@@ -1,11 +1,13 @@
 package com.example.myapplication;
 
+import com.google.firebase.Timestamp;
+
 public class Task {
     private String id;
     private String title;
     private String description;
     private boolean completed;
-    private Long timestamp; // Use wrapper Long to handle null
+    private Timestamp timestamp;
 
     // Firestore requires empty constructor
     public Task() {}
@@ -14,7 +16,6 @@ public class Task {
         this.title = title;
         this.description = description;
         this.completed = false;
-        // Do NOT set timestamp here anymore
     }
 
     // Getters and Setters
@@ -46,10 +47,15 @@ public class Task {
         this.completed = completed;
     }
 
-    public Long getTimestamp() {
+    public Timestamp getTimestamp() {
         return timestamp;
     }
-    public void setTimestamp(Long timestamp) {
+    public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
+    }
+
+    // Optional: use this to get timestamp as milliseconds
+    public long getTimestampMillis() {
+        return timestamp != null ? timestamp.toDate().getTime() : 0;
     }
 }
