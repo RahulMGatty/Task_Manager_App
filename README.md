@@ -56,3 +56,19 @@ service cloud.firestore {
     }
   }
 }
+
+```
+---
+
+## 🧪 Planned Features
+
+| Feature                         | Description                                     | Status   |
+|----------------------------------|-------------------------------------------------|----------|
+| 🔔 Push Notifications           | Task alerts and daily reminders                | ❌ Pending |
+| 📅 Due Date Integration          | Assign deadlines to tasks                      | ❌ Pending |
+| 📊 Task Analytics                | Visual insights into completion & habits       | ❌ Pending |
+| 🎨 Custom Themes                 | User-selectable color schemes and modes        | ❌ Pending |
+| 📤 Backup & Export               | Export tasks to file/cloud                     | ❌ Pending |
+| 🗓️ Calendar View                 | Visual task scheduling in calendar format      | ❌ Pending |
+
+---
