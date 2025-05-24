@@ -60,15 +60,48 @@ service cloud.firestore {
 ```
 ---
 
+---
+
 ## 🧪 Planned Features
 
-| Feature                         | Description                                     | Status   |
-|----------------------------------|-------------------------------------------------|----------|
-| 🔔 Push Notifications           | Task alerts and daily reminders                | ❌ Pending |
-| 📅 Due Date Integration          | Assign deadlines to tasks                      | ❌ Pending |
-| 📊 Task Analytics                | Visual insights into completion & habits       | ❌ Pending |
-| 🎨 Custom Themes                 | User-selectable color schemes and modes        | ❌ Pending |
-| 📤 Backup & Export               | Export tasks to file/cloud                     | ❌ Pending |
-| 🗓️ Calendar View                 | Visual task scheduling in calendar format      | ❌ Pending |
+| Feature                         | Description                                     | Status       |
+|----------------------------------|-------------------------------------------------|--------------|
+| 🔔 Push Notifications           | Task alerts and daily reminders                | ❌ Pending     |
+| 📅 Due Date Integration          | Assign deadlines to tasks                      | ❌ Pending     |
+| 📊 Task Analytics                | Visual insights into completion & habits       | ❌ Pending     |
+| 🎨 Custom Themes                 | User-selectable color schemes and modes        | ⚙️ In Progress |
+| 🌙 Dark Mode Support             | Support for light/dark themes                  | ✅ Completed   |
+| 🔐 User Authentication          | Secure login and user-based task storage       | ✅ Completed   |
+| 📝 Task CRUD Functionality      | Create, Read, Update, Delete tasks             | ✅ Completed   |
+| 🗂️ Task Filtering & Sorting      | Filter tasks (all/completed/pending) + sort    | ✅ Completed   |
+| 📤 Backup & Export               | Export tasks to file/cloud                     | ❌ Pending     |
+| 🗓️ Calendar View                 | Visual task scheduling in calendar format      | ❌ Pending     |
 
 ---
+---
+
+## 📸 Screenshots
+
+> Below are sample screenshots illustrating key features of *Mission Me*:
+
+| Home Screen                        | Add Task                          | Edit Task                         |
+|-----------------------------------|-----------------------------------|-----------------------------------|
+| ![Home](screenshots/home.png)     | ![Add](screenshots/add_task.png)  | ![Edit](screenshots/edit_task.png)|
+
+> *Note: Place your actual screenshots in a `screenshots/` directory.*
+
+---
+
+## 👨‍💻 Developer
+
+| Name        | College                                     | Email                     |
+|-------------|---------------------------------------------|---------------------------|
+| **Rahul M** | St Aloysius (Deemed to be University), Mangalore | *Rahulchad34@gmail.com*     |
+
+- 🎓 Developed as part of a **college semester project**
+- 💬 Feel free to reach out for feedback or collaborations!
+
+---
+
+
+
